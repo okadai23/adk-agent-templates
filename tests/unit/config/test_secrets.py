@@ -1,8 +1,15 @@
 """Unit tests for SecretResolver."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from gemini_agent.config.secrets import SecretResolutionError, SecretResolver
+
+if TYPE_CHECKING:
+    from gemini_agent.config.types import ConfigMap
 
 
 def test_resolve_env_and_secret_placeholders() -> None:
@@ -14,7 +21,7 @@ def test_resolve_env_and_secret_placeholders() -> None:
         },
     )
 
-    value = {
+    value: ConfigMap = {
         "project": "${ENV:GOOGLE_CLOUD_PROJECT}",
         "auth": {"credential": "Bearer ${SECRET:API_TOKEN}"},
     }

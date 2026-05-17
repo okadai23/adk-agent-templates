@@ -1,14 +1,21 @@
 """Unit tests for ConfigMerger."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from gemini_agent.config.merge import ConfigMergeError, ConfigMerger
+
+if TYPE_CHECKING:
+    from gemini_agent.config.types import ConfigMap, ConfigValue
 
 
 def test_deep_merge_with_scalar_override() -> None:
     """Nested dict values should be merged while scalar is overwritten."""
     merger = ConfigMerger()
-    parent = {
+    parent: ConfigMap = {
         "model": {
             "name": "gemini-2.5",
             "temperature": 0.2,
@@ -16,7 +23,7 @@ def test_deep_merge_with_scalar_override() -> None:
         },
         "timeout": 30,
     }
-    child = {"model": {"temperature": 0.7}, "timeout": 45}
+    child: ConfigMap = {"model": {"temperature": 0.7}, "timeout": 45}
 
     merged = merger.merge(parent, child)
     assert isinstance(merged, dict)
@@ -44,8 +51,8 @@ def test_list_replace_by_default() -> None:
 def test_list_append_and_remove() -> None:
     """List directives should append and remove items."""
     merger = ConfigMerger()
-    parent = {"tools": ["search", "rag", "calc"]}
-    child = {"tools": {"$append": ["planner", "calc"], "$remove": ["rag"]}}
+    parent: ConfigMap = {"tools": ["search", "rag", "calc"]}
+    child: ConfigMap = {"tools": {"$append": ["planner", "calc"], "$remove": ["rag"]}}
 
     merged = merger.merge(parent, child)
     assert isinstance(merged, dict)
@@ -76,7 +83,7 @@ def test_unknown_list_operator_raises_error() -> None:
 def test_list_operator_requires_list_operand() -> None:
     """List operators must reject non-list operand values."""
     merger = ConfigMerger()
-    invalid_cases: list[tuple[str, object]] = [
+    invalid_cases: list[tuple[str, ConfigValue]] = [
         ("$append", {"x": 1}),
         ("$remove", "rag"),
     ]

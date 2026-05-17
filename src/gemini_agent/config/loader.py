@@ -3,9 +3,10 @@
 from pathlib import Path
 from collections.abc import Mapping
 
+from pydantic import TypeAdapter, ValidationError
 import yaml
 
-from .types import ConfigMap, ConfigValue
+from .types import ConfigMap
 
 
 class ConfigLoadError(RuntimeError):
@@ -68,7 +69,7 @@ class ConfigLoader:
             raise ConfigLoadError(msg)
 
         try:
-            raw_data = yaml.safe_load(file_path.read_text(encoding="utf-8"))
+            raw_data: object = yaml.safe_load(file_path.read_text(encoding="utf-8"))
         except yaml.YAMLError as exc:
             msg = f"Failed to parse YAML file {file_path}: {exc}"
             raise ConfigLoadError(msg) from exc
@@ -78,29 +79,9 @@ class ConfigLoader:
         if not isinstance(raw_data, Mapping):
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
-        loaded: ConfigMap = {}
-        for key, value in raw_data.items():
-            if not isinstance(key, str):
-                msg = (
-                    "Top-level YAML mapping keys must be strings in file: "
-                    f"{file_path}"
-                )
-                raise ConfigLoadError(msg)
-            loaded[key] = _to_config_value(value)
-        return loaded
-
-
-def _to_config_value(value: object) -> ConfigValue:
-    if isinstance(value, dict):
-        converted: ConfigMap = {}
-        for key, nested in value.items():
-            if not isinstance(key, str):
-                msg = "Nested config mapping keys must be strings."
-                raise ConfigLoadError(msg)
-            converted[key] = _to_config_value(nested)
-        return converted
-    if isinstance(value, list):
-        return [_to_config_value(item) for item in value]
-    if isinstance(value, (str, int, float, bool)) or value is None:
-        return value
-    return str(value)
+        try:
+            return self._config_map_adapter.validate_python(raw_data)
+        except ValidationError as exc:
+            msg = f"Invalid config mapping in file {file_path}: {exc}"
+            raise ConfigLoadError(msg) from exc
+    _config_map_adapter = TypeAdapter(ConfigMap)

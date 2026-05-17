@@ -1,10 +1,16 @@
 """Unit tests for ConfigLoader."""
 
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pytest
 
 from gemini_agent.config.loader import ConfigLoadError, ConfigLoader
+
+if TYPE_CHECKING:
+    from pathlib import Path
+    from gemini_agent.config.types import ConfigMap
 
 
 def _write(path: Path, body: str) -> None:
@@ -21,13 +27,29 @@ def test_load_all_local_environment(tmp_path: Path) -> None:
     _write(tmp_path / "environments" / "local.yaml", "debug: true\n")
 
     loader = ConfigLoader(tmp_path)
-    loaded = loader.load_all(environment="local")
+    loaded: ConfigMap = loader.load_all(environment="local")
 
-    assert loaded["model_profiles"]["default"]["model"] == "gemini-2.5"
-    assert loaded["knowledge_sources"]["sources"] == []
-    assert loaded["agent_catalog"]["agents"] == ["assistant"]
-    assert loaded["agents"]["assistant"]["name"] == "assistant"
-    assert loaded["environment"]["debug"] is True
+    model_profiles = loaded["model_profiles"]
+    knowledge_sources = loaded["knowledge_sources"]
+    agent_catalog = loaded["agent_catalog"]
+    agents = loaded["agents"]
+    environment = loaded["environment"]
+    assert isinstance(model_profiles, dict)
+    assert isinstance(knowledge_sources, dict)
+    assert isinstance(agent_catalog, dict)
+    assert isinstance(agents, dict)
+    assert isinstance(environment, dict)
+
+    default_profile = model_profiles["default"]
+    assistant_cfg = agents["assistant"]
+    assert isinstance(default_profile, dict)
+    assert isinstance(assistant_cfg, dict)
+
+    assert default_profile["model"] == "gemini-2.5"
+    assert knowledge_sources["sources"] == []
+    assert agent_catalog["agents"] == ["assistant"]
+    assert assistant_cfg["name"] == "assistant"
+    assert environment["debug"] is True
 
 
 def test_missing_yaml_contains_file_path(tmp_path: Path) -> None:
