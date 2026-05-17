@@ -1,7 +1,6 @@
 """YAML configuration loader for Gemini ADK agent framework."""
 
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -17,7 +16,7 @@ class ConfigLoader:
         """Initialize loader with config root path."""
         self.config_root = config_root
 
-    def load_all(self, *, environment: str) -> dict[str, Any]:
+    def load_all(self, *, environment: str) -> dict[str, object]:
         """Load all mandatory configuration files for one environment."""
         return {
             "model_profiles": self.load_model_profiles(),
@@ -27,19 +26,19 @@ class ConfigLoader:
             "environment": self.load_environment(environment),
         }
 
-    def load_model_profiles(self) -> dict[str, Any]:
+    def load_model_profiles(self) -> dict[str, object]:
         """Load model profile definitions."""
         return self._load_yaml(self.config_root / "model_profiles.yaml")
 
-    def load_knowledge_sources(self) -> dict[str, Any]:
+    def load_knowledge_sources(self) -> dict[str, object]:
         """Load knowledge source definitions."""
         return self._load_yaml(self.config_root / "knowledge_sources.yaml")
 
-    def load_agent_catalog(self) -> dict[str, Any]:
+    def load_agent_catalog(self) -> dict[str, object]:
         """Load agent catalog definition."""
         return self._load_yaml(self.config_root / "agent_catalog.yaml")
 
-    def load_agents(self) -> dict[str, Any]:
+    def load_agents(self) -> dict[str, object]:
         """Load all per-agent config files under agents directory."""
         agents_dir = self.config_root / "agents"
         if not agents_dir.exists():
@@ -49,17 +48,17 @@ class ConfigLoader:
             msg = f"Expected directory but found file: {agents_dir}"
             raise ConfigLoadError(msg)
 
-        loaded: dict[str, Any] = {}
+        loaded: dict[str, object] = {}
         for file_path in sorted(agents_dir.glob("*.yaml")):
             loaded[file_path.stem] = self._load_yaml(file_path)
         return loaded
 
-    def load_environment(self, environment: str) -> dict[str, Any]:
+    def load_environment(self, environment: str) -> dict[str, object]:
         """Load one environment override file."""
         env_file = self.config_root / "environments" / f"{environment}.yaml"
         return self._load_yaml(env_file)
 
-    def _load_yaml(self, file_path: Path) -> dict[str, Any]:
+    def _load_yaml(self, file_path: Path) -> dict[str, object]:
         """Load one YAML file and validate top-level type."""
         if not file_path.exists():
             msg = f"Missing config file: {file_path}"
@@ -76,5 +75,11 @@ class ConfigLoader:
         if not isinstance(raw_data, dict):
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
-
-        return raw_data
+        for key in raw_data:
+            if not isinstance(key, str):
+                msg = (
+                    "Top-level YAML mapping keys must be strings in file: "
+                    f"{file_path}"
+                )
+                raise ConfigLoadError(msg)
+        return {key: value for key, value in raw_data.items() if isinstance(key, str)}

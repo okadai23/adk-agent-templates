@@ -70,16 +70,14 @@ def test_unknown_list_operator_raises_error() -> None:
         merger.merge({"tools": ["search"]}, {"tools": {"$prepend": ["calc"]}})
 
 
-@pytest.mark.parametrize(
-    ("operator", "invalid_value"),
-    [("$append", {"x": 1}), ("$remove", "rag")],
-)
-def test_list_operator_requires_list_operand(
-    operator: str,
-    invalid_value: object,
-) -> None:
+def test_list_operator_requires_list_operand() -> None:
     """List operators must reject non-list operand values."""
     merger = ConfigMerger()
+    invalid_cases: list[tuple[str, object]] = [
+        ("$append", {"x": 1}),
+        ("$remove", "rag"),
+    ]
 
-    with pytest.raises(ConfigMergeError, match="expects a list value"):
-        merger.merge({"tools": ["search"]}, {"tools": {operator: invalid_value}})
+    for operator, invalid_value in invalid_cases:
+        with pytest.raises(ConfigMergeError, match="expects a list value"):
+            merger.merge({"tools": ["search"]}, {"tools": {operator: invalid_value}})

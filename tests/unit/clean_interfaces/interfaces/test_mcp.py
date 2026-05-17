@@ -1,8 +1,8 @@
 """Tests for MCP interface implementation."""
 
 from unittest.mock import MagicMock, patch
+from collections.abc import Callable
 
-import pytest
 from fastmcp import FastMCP
 
 from clean_interfaces.interfaces.base import BaseInterface
@@ -27,12 +27,21 @@ class TestMCPInterface:
         assert hasattr(mcp, "mcp")
         assert isinstance(mcp.mcp, FastMCP)
 
-    @pytest.mark.asyncio  # pyright: ignore [reportUnknownMemberType, reportUntypedFunctionDecorator, reportAttributeAccessIssue]
-    async def test_mcp_welcome_command(self) -> None:
-        """Test MCP welcome command functionality."""
-        mcp = MCPInterface()
-        tools = await mcp.mcp.get_tools()
-        assert "welcome" in tools
+    def test_mcp_registers_welcome_command(self) -> None:
+        """Test that MCP setup registers welcome command."""
+        registered_names: list[str] = []
+
+        def fake_tool() -> object:
+            def register(func: Callable[..., object]) -> Callable[..., object]:
+                registered_names.append(func.__name__)
+                return func
+
+            return register
+
+        with patch("fastmcp.FastMCP.tool", return_value=fake_tool()):
+            MCPInterface()
+
+        assert "welcome" in registered_names
 
     @patch("fastmcp.FastMCP.run")
     def test_mcp_run_method(self, mock_run: MagicMock) -> None:

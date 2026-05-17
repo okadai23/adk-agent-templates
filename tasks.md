@@ -53,6 +53,7 @@
   - `tests/unit/config/test_model_profiles.py` で継承解決 / unknown profile / cycle検出を検証
   - Ruff指摘（TC003/D107）に対応し、`TYPE_CHECKING` import化と `__init__` docstring を追加
   - CI typing依存解決エラー（`deprecated` ↔ `wrapt`）に対応し、`wrapt<2` 制約をdev依存/constraintsへ反映
+  - Pyright指摘に対応し、config系の再帰型注釈・API route定義・MCPテストの型安全化を実施
   - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py` / `ruff check src/gemini_agent/config/model_profiles.py`
 - [ ] [TODO] TASK-009: GenerateContentConfig変換実装
 

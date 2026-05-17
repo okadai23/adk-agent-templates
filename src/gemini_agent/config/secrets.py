@@ -2,7 +2,6 @@
 
 import os
 import re
-from typing import Any
 
 _PATTERN = re.compile(r"\$\{(ENV|SECRET):([A-Za-z_][A-Za-z0-9_]*)\}")
 
@@ -18,14 +17,12 @@ class SecretResolver:
         """Initialize resolver with optional env provider."""
         self._env_provider = dict(os.environ) if env_provider is None else env_provider
 
-    def resolve(self, value: Any) -> Any:
+    def resolve(self, value: object) -> object:
         """Resolve placeholders inside nested structures."""
         if isinstance(value, dict):
             return {key: self.resolve(nested) for key, nested in value.items()}
         if isinstance(value, list):
             return [self.resolve(item) for item in value]
-        if isinstance(value, tuple):
-            return tuple(self.resolve(item) for item in value)
         if isinstance(value, str):
             return self._resolve_text(value)
         return value
