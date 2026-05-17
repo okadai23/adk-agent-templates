@@ -52,6 +52,7 @@
   - `ProfileResolver` と `ModelProfileError` を実装し、`extends` 継承・deep merge・循環参照検出を追加
   - `tests/unit/config/test_model_profiles.py` で継承解決 / unknown profile / cycle検出を検証
   - Ruff指摘（TC003/D107）に対応し、`TYPE_CHECKING` import化と `__init__` docstring を追加
+  - CI typing依存解決エラー（`deprecated` ↔ `wrapt`）に対応し、`wrapt<2` 制約をdev依存/constraintsへ反映
   - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py` / `ruff check src/gemini_agent/config/model_profiles.py`
 - [ ] [TODO] TASK-009: GenerateContentConfig変換実装
 
