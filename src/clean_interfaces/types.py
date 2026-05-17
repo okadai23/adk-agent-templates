@@ -1,9 +1,9 @@
 """Type definitions for clean interfaces."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class InterfaceType(str, Enum):
+class InterfaceType(StrEnum):
     """Available interface types."""
 
     CLI = "cli"

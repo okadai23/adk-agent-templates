@@ -63,9 +63,19 @@
 
 ## Epic 3. Agent Catalog / Agent Config
 
-- [ ] [TODO] TASK-010: Agent Catalog Pydantic Model実装
-- [ ] [TODO] TASK-011: Agent Config Pydantic Model実装
-- [ ] [TODO] TASK-012: Agent Graph Validator実装
+- [x] [DONE] TASK-010: Agent Catalog Pydantic Model実装
+  - `src/gemini_agent/config/agent_catalog.py` に `AgentCatalog` / `AgentCatalogEntry` を追加し、`root_agent` 整合性検証を実装
+  - 主要ファイル: `src/gemini_agent/config/agent_catalog.py`, `tests/unit/config/test_agent_catalog.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/config/test_agent_catalog.py`
+- [x] [DONE] TASK-011: Agent Config Pydantic Model実装
+  - `AgentConfig` と関連ネストモデル（agent/model/runtime/tools/rag/skills/observability）を実装
+  - `sub_agents` の自己参照禁止バリデーションを追加
+  - 検証: `uv run --with nox nox -s test -- tests/unit/config/test_agent_catalog.py`
+- [x] [DONE] TASK-012: Agent Graph Validator実装
+  - 追補: `uv run --with nox nox` 完走のため既存品質課題を修正（StrEnum移行、Sphinx重複警告解消、docs_serveをopt-in化）
+  - `AgentGraphValidator` を実装し、未知sub-agent/循環参照/root到達不能(orphan)を検証
+  - 主要ファイル: `src/gemini_agent/config/agent_catalog.py`, `tests/unit/config/test_agent_catalog.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/config/test_agent_catalog.py`
 
 ## Epic 4. Knowledge Source Factory / RAG
 
