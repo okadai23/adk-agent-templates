@@ -59,4 +59,8 @@ class ProfileResolver:
 
         parent_raw = self._resolve_raw(parent_name, stack=[*stack, profile_name])
         child_raw = {k: v for k, v in current.items() if k != "extends"}
-        return self._merger.merge(parent_raw, child_raw)
+        merged = self._merger.merge(parent_raw, child_raw)
+        if not isinstance(merged, dict):
+            msg = f"Invalid merged model profile payload for '{profile_name}'."
+            raise ModelProfileError(msg)
+        return merged

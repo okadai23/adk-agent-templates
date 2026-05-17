@@ -1,6 +1,7 @@
 """YAML configuration loader for Gemini ADK agent framework."""
 
 from pathlib import Path
+from collections.abc import Mapping
 
 import yaml
 
@@ -72,7 +73,7 @@ class ConfigLoader:
 
         if raw_data is None:
             return {}
-        if not isinstance(raw_data, dict):
+        if not isinstance(raw_data, Mapping):
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
         for key in raw_data:
@@ -82,4 +83,4 @@ class ConfigLoader:
                     f"{file_path}"
                 )
                 raise ConfigLoadError(msg)
-        return {key: value for key, value in raw_data.items() if isinstance(key, str)}
+        return {str(key): value for key, value in raw_data.items()}

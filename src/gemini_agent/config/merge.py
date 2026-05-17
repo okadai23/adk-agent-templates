@@ -18,13 +18,13 @@ class ConfigMerger:
         if override is None:
             return None
 
-        if isinstance(base, dict) and isinstance(override, dict):
+        if _is_str_object_dict(base) and _is_str_object_dict(override):
             return self._merge_dict(base, override)
 
-        if isinstance(base, list):
+        if _is_object_list(base):
             return self._merge_list(base, override)
 
-        if isinstance(override, dict) and self._has_list_directive(override):
+        if _is_str_object_dict(override) and self._has_list_directive(override):
             msg = "List directives are only valid when overriding list values."
             raise ConfigMergeError(msg)
 
@@ -81,3 +81,11 @@ class ConfigMerger:
 
     def _has_list_directive(self, value: dict[str, object]) -> bool:
         return any(key in self._LIST_DIRECTIVES for key in value)
+
+
+def _is_str_object_dict(value: object) -> bool:
+    return isinstance(value, dict) and all(isinstance(key, str) for key in value)
+
+
+def _is_object_list(value: object) -> bool:
+    return isinstance(value, list)

@@ -19,9 +19,9 @@ class SecretResolver:
 
     def resolve(self, value: object) -> object:
         """Resolve placeholders inside nested structures."""
-        if isinstance(value, dict):
+        if _is_str_object_dict(value):
             return {key: self.resolve(nested) for key, nested in value.items()}
-        if isinstance(value, list):
+        if _is_object_list(value):
             return [self.resolve(item) for item in value]
         if isinstance(value, str):
             return self._resolve_text(value)
@@ -44,3 +44,11 @@ class SecretResolver:
             msg = f"Missing {placeholder_type} value for key '{key}'."
             raise SecretResolutionError(msg)
         return value
+
+
+def _is_str_object_dict(value: object) -> bool:
+    return isinstance(value, dict) and all(isinstance(key, str) for key in value)
+
+
+def _is_object_list(value: object) -> bool:
+    return isinstance(value, list)
