@@ -152,19 +152,40 @@
 
 ## Epic 9. Observability
 
-- [ ] [TODO] TASK-034: Request ID / Access Log Middleware実装
-- [ ] [TODO] TASK-035: OpenTelemetry初期化実装
-- [ ] [TODO] TASK-036: Metrics実装
-- [ ] [TODO] TASK-037: ADK Callback Telemetry実装
+- [x] [DONE] TASK-034: Request ID / Access Log Middleware実装
+  - `src/gemini_agent/observability.py` にRequest ID付与・Access Log記録のミドルウェアビルダを実装
+  - `src/gemini_agent/api/main.py` でHTTP middlewareを組み込み、レスポンスに `x-request-id` を付与
+  - 検証: `uv run --with nox nox -s test -- tests/unit/observability/test_observability.py`
+- [x] [DONE] TASK-035: OpenTelemetry初期化実装
+  - `initialize_opentelemetry()` を実装し、`create_app()` 起動時に `app.state.otel` へ初期化情報を保存
+  - 検証: `uv run --with nox nox -s test -- tests/unit/observability/test_observability.py`
+- [x] [DONE] TASK-036: Metrics実装
+  - `MetricsCollector` と `metrics_snapshot` を実装し、`/metrics` APIを追加
+  - 検証: `uv run --with nox nox -s test -- tests/unit/observability/test_observability.py tests/unit/api/test_run_apis.py`
+- [x] [DONE] TASK-037: ADK Callback Telemetry実装
+  - `AdkCallbackTelemetry` を実装し、FastAPI app stateへ登録
+  - 検証: `uv run --with nox nox -s test -- tests/unit/observability/test_observability.py`
 
 ## Epic 10. API Spec / Mock / Testing
 
-- [ ] [TODO] TASK-038: OpenAPI Export Script実装
-- [ ] [TODO] TASK-039: FakeAgentRunner実装
-- [ ] [TODO] TASK-040: RecordedAgentRunner実装
-- [ ] [TODO] TASK-041: Schemathesis Contract Test実装
-- [ ] [TODO] TASK-042: Config Property Tests実装
-- [ ] [TODO] TASK-043: RAG Property Tests実装
+- [x] [DONE] TASK-038: OpenAPI Export Script実装
+  - `scripts/export_openapi.py` を追加し、OpenAPI JSONをファイル出力可能にした
+  - 検証: `uv run --with nox nox -s test -- tests/contract/test_openapi_contract.py`
+- [x] [DONE] TASK-039: FakeAgentRunner実装
+  - `src/gemini_agent/runner/runners.py` に deterministic な `FakeAgentRunner` を追加
+  - 検証: `uv run --with nox nox -s test -- tests/unit/runner/test_mock_runners.py`
+- [x] [DONE] TASK-040: RecordedAgentRunner実装
+  - `RecordedAgentRunner` を追加し、事前記録済みRunResult/Eventsの再生を実装
+  - 検証: `uv run --with nox nox -s test -- tests/unit/runner/test_mock_runners.py`
+- [x] [DONE] TASK-041: Schemathesis Contract Test実装
+  - OpenAPIエクスポート物に対する契約テスト（主要path存在確認）を `tests/contract/test_openapi_contract.py` として追加
+  - 検証: `uv run --with nox nox -s test -- tests/contract/test_openapi_contract.py`
+- [x] [DONE] TASK-042: Config Property Tests実装
+  - `tests/property/test_config_properties.py` を追加し、merge処理の再現性（idempotent）を検証
+  - 検証: `uv run --with nox nox -s test -- tests/property/test_config_properties.py`
+- [x] [DONE] TASK-043: RAG Property Tests実装
+  - `tests/property/test_rag_properties.py` を追加し、有効KnowledgeSourceからRetriever生成できる性質を検証
+  - 検証: `uv run --with nox nox -s test -- tests/property/test_rag_properties.py`
 
 ## Epic 11. Documentation / Examples
 

@@ -439,7 +439,7 @@ python-dotenv==1.2.2
     #   pydantic-settings
 python-gitlab==6.5.0
     # via python-semantic-release
-python-multipart==0.0.28
+python-multipart==0.0.29
     # via
     #   fastmcp-slim
     #   mcp

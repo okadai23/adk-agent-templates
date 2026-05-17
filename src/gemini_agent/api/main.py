@@ -9,11 +9,19 @@ from typing import Any
 from uuid import uuid4
 
 from fastapi import FastAPI
-from starlette.requests import Request  # noqa: TC002
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException
+from starlette.requests import Request  # noqa: TC002
 
 from gemini_agent.config import AgentCatalog, ConfigLoader, ConfigLoadError
+from gemini_agent.observability import (
+    AccessLogger,
+    AdkCallbackTelemetry,
+    MetricsCollector,
+    build_observability_middleware,
+    initialize_opentelemetry,
+    metrics_snapshot,
+)
 from gemini_agent.runner import AdkEmbeddedRunner, RunRequest
 from gemini_agent.security.auth import Authenticator, Principal
 from gemini_agent.settings import get_settings
@@ -74,6 +82,9 @@ class _JobStore:
 
 
 _JOB_STORE = _JobStore()
+_METRICS = MetricsCollector()
+_ACCESS_LOGGER = AccessLogger()
+_CALLBACK_TELEMETRY = AdkCallbackTelemetry()
 
 
 def _authenticate_request(request: Request) -> Principal:
@@ -192,6 +203,12 @@ def get_async_job(job_id: str, request: Request) -> AsyncJobStatusResponse:
     return found
 
 
+def get_metrics(request: Request) -> dict[str, object]:
+    """Return in-memory HTTP metrics."""
+    _authenticate_request(request)
+    return metrics_snapshot(_METRICS)
+
+
 def create_app() -> FastAPI:
     """Create and configure FastAPI app."""
     app = FastAPI(title="Gemini ADK Agent Framework API", version="0.1.0")
@@ -199,8 +216,14 @@ def create_app() -> FastAPI:
     app.get("/readyz")(readyz)
     app.get("/agents")(list_agents)
     app.get("/skills/{skill_id}")(get_skill)
+    app.get("/metrics")(get_metrics)
     app.add_api_route("/run", run_sync, methods=["POST"])
     app.add_api_route("/run:stream", run_stream, methods=["POST"])
     app.add_api_route("/jobs", create_async_job, methods=["POST"])
     app.get("/jobs/{job_id}")(get_async_job)
+    app.middleware("http")(
+        build_observability_middleware(metrics=_METRICS, access_logger=_ACCESS_LOGGER),
+    )
+    app.state.otel = initialize_opentelemetry(service_name="gemini-adk-agent-framework")
+    app.state.callback_telemetry = _CALLBACK_TELEMETRY
     return app

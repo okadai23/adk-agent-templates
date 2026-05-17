@@ -105,3 +105,54 @@ class AdkHttpRunner:
                     str(key): value for key, value in raw_event.items()
                 }
                 yield self._event_mapper.map_event(event, agent_id=command.agent_id)
+
+
+class FakeAgentRunner:
+    """Deterministic runner for tests and local mocks."""
+
+    async def run(self, command: RunRequest) -> RunResult:
+        """Return synthetic completed result."""
+        run_id = command.session_id or f"fake-{command.agent_id}"
+        return RunResult(
+            run_id=run_id, output_text=command.input_text, status="completed",
+        )
+
+    async def stream(self, command: RunRequest) -> AsyncIterator[AgentEvent]:
+        """Emit a deterministic three-event lifecycle."""
+        run_id = command.session_id or f"fake-{command.agent_id}"
+        mapper = EventMapper()
+        for raw_event in (
+            {"type": "run_started", "run_id": run_id, "payload": {}},
+            {
+                "type": "text_completed",
+                "run_id": run_id,
+                "payload": {"text": command.input_text},
+            },
+            {"type": "run_completed", "run_id": run_id, "payload": {}},
+        ):
+            yield mapper.map_event(raw_event, agent_id=command.agent_id)
+
+
+class RecordedAgentRunner:
+    """Runner that replays pre-recorded sync and stream payloads."""
+
+    def __init__(
+        self,
+        *,
+        run_result: RunResult,
+        stream_events: list[AgentEvent],
+    ) -> None:
+        """Initialize runner with pre-recorded result and stream events."""
+        self._run_result = run_result
+        self._stream_events = stream_events
+
+    async def run(self, command: RunRequest) -> RunResult:
+        """Ignore input and replay recorded run result."""
+        _ = command
+        return self._run_result
+
+    async def stream(self, command: RunRequest) -> AsyncIterator[AgentEvent]:
+        """Ignore input and replay recorded stream events."""
+        _ = command
+        for event in self._stream_events:
+            yield event
