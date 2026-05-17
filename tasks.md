@@ -137,9 +137,18 @@
 
 ## Epic 8. Auth / Security
 
-- [ ] [TODO] TASK-031: API Key Auth実装
-- [ ] [TODO] TASK-032: JWT Verifier骨格実装
-- [ ] [TODO] TASK-033: Authorization Policy実装
+- [x] [DONE] TASK-031: API Key Auth実装
+  - `src/gemini_agent/security/auth.py` に `Authenticator` を追加し、`auth_mode=api_key` で `x-api-key` 認証を実装
+  - `src/gemini_agent/api/main.py` の主要API (`/agents`, `/run`, `/run:stream`, `/jobs`) に認証依存性を導入
+  - 検証: `uv run --with nox nox -s test -- tests/unit/security/test_auth.py tests/unit/api/test_run_apis.py`
+- [x] [DONE] TASK-032: JWT Verifier骨格実装
+  - `JwtVerifier` 骨格を実装し、Bearerトークン入力検証とPrincipal返却インターフェースを定義
+  - 主要ファイル: `src/gemini_agent/security/auth.py`, `src/gemini_agent/security/__init__.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/security/test_auth.py`
+- [x] [DONE] TASK-033: Authorization Policy実装
+  - `AuthorizationPolicy` を実装し、allowed_roles に基づくRBAC判定（許可/403）を追加
+  - 主要ファイル: `src/gemini_agent/security/auth.py`, `tests/unit/security/test_auth.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/security/test_auth.py`
 
 ## Epic 9. Observability
 
