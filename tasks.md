@@ -29,8 +29,14 @@
   - `src/gemini_agent/settings.py` に `Settings` と `get_settings()` を実装（`AGENT_` prefix / `lru_cache`）
   - `environment`, `auth_mode`, `runner_mode`, `config_root` を定義し、未知環境変数をignore
   - 検証: `pytest -q tests/unit/test_settings.py`
-- [ ] [TODO] TASK-004: YAML Config Loader実装
-- [ ] [TODO] TASK-005: SecretResolver実装
+- [x] [DONE] TASK-004: YAML Config Loader実装
+  - `src/gemini_agent/config/loader.py` に `ConfigLoader` / `ConfigLoadError` を実装し、必須YAML群と環境別設定の読み込みを追加
+  - 不在ファイル・YAML parse error・トップレベル型不正時に対象ファイルパスを含む例外を送出
+  - 検証: `pytest -q tests/unit/config/test_loader.py`
+- [x] [DONE] TASK-005: SecretResolver実装
+  - `src/gemini_agent/config/secrets.py` に `${ENV:...}` / `${SECRET:...}` を再帰解決する `SecretResolver` を実装
+  - 未解決placeholderと未定義キーで `SecretResolutionError` を送出し、secret値をエラー文に含めない実装を追加
+  - 検証: `pytest -q tests/unit/config/test_secrets.py`
 - [ ] [TODO] TASK-006: Config Merge実装
 
 ## Epic 2. Model Profile Resolver
