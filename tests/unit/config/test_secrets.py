@@ -28,9 +28,11 @@ def test_resolve_env_and_secret_placeholders() -> None:
 
     resolved = resolver.resolve(value)
     assert isinstance(resolved, dict)
+    auth = resolved["auth"]
+    assert isinstance(auth, dict)
 
     assert resolved["project"] == "project-local"
-    assert resolved["auth"]["credential"] == "Bearer token-value"
+    assert auth["credential"] == "Bearer token-value"
 
 
 def test_missing_secret_does_not_leak_secret_value() -> None:

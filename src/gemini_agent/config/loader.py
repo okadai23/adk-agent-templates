@@ -3,10 +3,9 @@
 from pathlib import Path
 from collections.abc import Mapping
 
-from pydantic import TypeAdapter, ValidationError
 import yaml
 
-from .types import ConfigMap
+from .types import ConfigMap, ConfigValue
 
 
 class ConfigLoadError(RuntimeError):
@@ -80,8 +79,28 @@ class ConfigLoader:
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
         try:
-            return self._config_map_adapter.validate_python(raw_data)
-        except ValidationError as exc:
+            return _validate_config_map(raw_data)
+        except (TypeError, ValueError) as exc:
             msg = f"Invalid config mapping in file {file_path}: {exc}"
             raise ConfigLoadError(msg) from exc
-    _config_map_adapter = TypeAdapter(ConfigMap)
+
+
+def _validate_config_map(data: Mapping[object, object]) -> ConfigMap:
+    validated: ConfigMap = {}
+    for key, value in data.items():
+        if not isinstance(key, str):
+            msg = "Top-level YAML mapping keys must be strings."
+            raise TypeError(msg)
+        validated[key] = _validate_config_value(value)
+    return validated
+
+
+def _validate_config_value(value: object) -> ConfigValue:
+    if isinstance(value, dict):
+        return _validate_config_map(value)
+    if isinstance(value, list):
+        return [_validate_config_value(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    msg = f"Unsupported config value type: {type(value).__name__}"
+    raise ValueError(msg)
