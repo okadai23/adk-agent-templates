@@ -16,7 +16,7 @@ class SecretResolver:
 
     def __init__(self, env_provider: dict[str, str] | None = None) -> None:
         """Initialize resolver with optional env provider."""
-        self._env_provider = env_provider or dict(os.environ)
+        self._env_provider = dict(os.environ) if env_provider is None else env_provider
 
     def resolve(self, value: Any) -> Any:
         """Resolve placeholders inside nested structures."""
