@@ -52,6 +52,8 @@ nav:
       - Contributing: development/contributing.md
       - Testing: development/testing.md
       - Code Style: development/code-style.md
+  - Specifications:
+      - Gemini ADK Agent Framework v1: specs/gemini-adk-agent-framework-v1.md
   - About:
       - License: about/license.md
       - Changelog: about/changelog.md
