@@ -5,14 +5,17 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 from fastapi import FastAPI
+from starlette.requests import Request  # noqa: TC002
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException
 
 from gemini_agent.config import AgentCatalog, ConfigLoader, ConfigLoadError
 from gemini_agent.runner import AdkEmbeddedRunner, RunRequest
+from gemini_agent.security.auth import Authenticator, Principal
 from gemini_agent.settings import get_settings
 from gemini_agent.skills import FilesystemSkillFactory, SkillFactoryError
 
@@ -26,14 +29,14 @@ class RunRequestBody(BaseModel):
 
 
 class AsyncJobCreateResponse(BaseModel):
-    """Response for async run creation."""
+    """Response for async job creation."""
 
     job_id: str
     status: str
 
 
 class AsyncJobStatusResponse(BaseModel):
-    """Response for async job lookup."""
+    """Response for async job status."""
 
     job_id: str
     status: str
@@ -73,18 +76,29 @@ class _JobStore:
 _JOB_STORE = _JobStore()
 
 
+def _authenticate_request(request: Request) -> Principal:
+    """Authenticate a request from headers."""
+    settings = get_settings()
+    authenticator = Authenticator(settings)
+    headers: Any = getattr(request, "headers", {})
+    auth_header = headers.get("authorization")
+    api_key = headers.get("x-api-key")
+    return authenticator.authenticate(auth_header, api_key)
+
+
 def healthz() -> dict[str, str]:
-    """Return health check result."""
+    """Return health status."""
     return {"status": "ok"}
 
 
 def readyz() -> dict[str, str]:
-    """Return readiness check result."""
+    """Return readiness status."""
     return {"status": "ok"}
 
 
-def list_agents() -> dict[str, object]:
+def list_agents(request: Request) -> dict[str, object]:
     """Return exposed agents from catalog."""
+    _authenticate_request(request)
     settings = get_settings()
     loader = ConfigLoader(settings.config_root)
     try:
@@ -106,8 +120,9 @@ def list_agents() -> dict[str, object]:
     return {"root_agent": catalog.root_agent, "agents": agents}
 
 
-def get_skill(skill_id: str) -> dict[str, str]:
-    """Return skill prompt by skill id."""
+def get_skill(skill_id: str, request: Request) -> dict[str, str]:
+    """Return skill prompt by skill ID."""
+    _authenticate_request(request)
     skill_factory = FilesystemSkillFactory(Path("configs/skills"))
     try:
         spec = skill_factory.create(skill_id)
@@ -116,15 +131,16 @@ def get_skill(skill_id: str) -> dict[str, str]:
     return {"skill_id": spec.skill_id, "path": str(spec.path), "prompt": spec.prompt}
 
 
-async def run_sync(body: RunRequestBody) -> dict[str, str]:
-    """Run one sync agent execution."""
+async def run_sync(body: RunRequestBody, request: Request) -> dict[str, str]:
+    """Run one synchronous execution."""
+    _authenticate_request(request)
     runner = AdkEmbeddedRunner()
-    request = RunRequest(
+    run_request = RunRequest(
         agent_id=body.agent_id,
         input_text=body.input,
         session_id=body.session_id,
     )
-    result = await runner.run(request)
+    result = await runner.run(run_request)
     return {
         "run_id": result.run_id,
         "output_text": result.output_text,
@@ -132,35 +148,44 @@ async def run_sync(body: RunRequestBody) -> dict[str, str]:
     }
 
 
-async def run_stream(body: RunRequestBody) -> dict[str, list[dict[str, object]]]:
-    """Run one streaming agent execution."""
+async def run_stream(
+    body: RunRequestBody,
+    request: Request,
+) -> dict[str, list[dict[str, object]]]:
+    """Run one streaming execution."""
+    _authenticate_request(request)
     runner = AdkEmbeddedRunner()
-    request = RunRequest(
+    run_request = RunRequest(
         agent_id=body.agent_id,
         input_text=body.input,
         session_id=body.session_id,
     )
-    events = [asdict(event) async for event in runner.stream(request)]
+    events = [asdict(event) async for event in runner.stream(run_request)]
     return {"events": events}
 
 
-async def create_async_job(body: RunRequestBody) -> AsyncJobCreateResponse:
-    """Create async job and persist final state."""
+async def create_async_job(
+    body: RunRequestBody,
+    request: Request,
+) -> AsyncJobCreateResponse:
+    """Create async job and persist completion state."""
+    _authenticate_request(request)
     runner = AdkEmbeddedRunner()
     job_id = f"job-{uuid4().hex}"
     _JOB_STORE.create_pending(job_id)
-    request = RunRequest(
+    run_request = RunRequest(
         agent_id=body.agent_id,
         input_text=body.input,
         session_id=body.session_id,
     )
-    result = await runner.run(request)
+    result = await runner.run(run_request)
     _JOB_STORE.complete(job_id, run_id=result.run_id, output_text=result.output_text)
     return AsyncJobCreateResponse(job_id=job_id, status="queued")
 
 
-def get_async_job(job_id: str) -> AsyncJobStatusResponse:
-    """Get async job current status."""
+def get_async_job(job_id: str, request: Request) -> AsyncJobStatusResponse:
+    """Return async job current status."""
+    _authenticate_request(request)
     found = _JOB_STORE.get(job_id)
     if found is None:
         raise HTTPException(status_code=404, detail=f"job not found: {job_id}")

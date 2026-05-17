@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     auth_mode: Literal["none", "api_key", "jwt"] = "none"
     runner_mode: Literal["embedded", "http", "fake", "recorded"] = "embedded"
     config_root: Path = Path("configs")
+    api_key: str | None = None
 
 
 @lru_cache(maxsize=1)
