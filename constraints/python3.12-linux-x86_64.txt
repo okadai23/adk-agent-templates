@@ -388,7 +388,7 @@ requests==2.33.0
     #   sphinx
 requests-toolbelt==1.0.0
     # via python-gitlab
-resolvelib==1.2.0
+resolvelib==1.2.1
     # via pdm
 responses==0.25.7
     # via testproject (pyproject.toml)
