@@ -35,7 +35,9 @@ def test_missing_secret_does_not_leak_secret_value() -> None:
     assert "secret-token" not in str(exc_info.value)
 
 
-def test_empty_env_provider_does_not_fallback_to_os_environ(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_empty_env_provider_does_not_fallback_to_os_environ(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Explicit empty provider should not read process environment values."""
     monkeypatch.setenv("API_TOKEN", "present-in-process-env")
     resolver = SecretResolver(env_provider={})

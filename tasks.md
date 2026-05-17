@@ -37,7 +37,10 @@
   - `src/gemini_agent/config/secrets.py` に `${ENV:...}` / `${SECRET:...}` を再帰解決する `SecretResolver` を実装
   - 未解決placeholderと未定義キーで `SecretResolutionError` を送出し、secret値をエラー文に含めない実装を追加
   - 検証: `pytest -q tests/unit/config/test_secrets.py`
-- [ ] [TODO] TASK-006: Config Merge実装
+- [x] [DONE] TASK-006: Config Merge実装
+  - `src/gemini_agent/config/merge.py` に `ConfigMerger` / `ConfigMergeError` を実装（deep merge / scalar上書き / list replace / `$append` / `$remove` / `null`削除）
+  - `tests/unit/config/test_merge.py` でdictマージ・list演算子・unknown演算子エラーを検証
+  - 検証: `pytest -q tests/unit/config/test_merge.py tests/unit/config/test_secrets.py` / `nox -s lint`
 
 ## Epic 2. Model Profile Resolver
 
