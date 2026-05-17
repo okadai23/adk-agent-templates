@@ -92,9 +92,18 @@
 
 ## Epic 5. Tool / Skill Factory
 
-- [ ] [TODO] TASK-019: ToolRegistry実装
-- [ ] [TODO] TASK-020: Filesystem SkillFactory実装
-- [ ] [TODO] TASK-021: Skill API実装
+- [x] [DONE] TASK-019: ToolRegistry実装
+  - `src/gemini_agent/tools/registry.py` に ToolRegistry / ToolRegistryError を実装（register/get/list/重複検知）
+  - 主要ファイル: `src/gemini_agent/tools/registry.py`, `tests/unit/tools/test_registry.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/tools/test_registry.py`
+- [x] [DONE] TASK-020: Filesystem SkillFactory実装
+  - `src/gemini_agent/skills/factory.py` に FilesystemSkillFactory を実装（`<skill_id>.md` 読込、未存在/空ファイルエラー）
+  - 主要ファイル: `src/gemini_agent/skills/factory.py`, `tests/unit/skills/test_factory.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/skills/test_factory.py`
+- [x] [DONE] TASK-021: Skill API実装
+  - `src/gemini_agent/api/main.py` で `/skills/{skill_id}` を追加
+  - 主要ファイル: `src/gemini_agent/api/main.py`, `tests/unit/api/test_skills_api.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/api/test_skills_api.py` / `uv run --with nox nox`（lint/typing/docs_sphinx含む全セッション成功）
 
 ## Epic 6. ADK Agent Factory / Runner
 

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
     from gemini_agent.config.knowledge import KnowledgeSourceConfig
 from gemini_agent.rag.retrievers import (
     FakeKnowledgeRetriever,
@@ -34,7 +35,8 @@ class KnowledgeSourceFactory:
         raise ValueError(msg)
 
     def create_many(
-        self, sources: list[KnowledgeSourceConfig],
+        self,
+        sources: list[KnowledgeSourceConfig],
     ) -> HybridKnowledgeRetriever:
         """Create one hybrid retriever from multiple source configs."""
         return HybridKnowledgeRetriever([self.create(source) for source in sources])
