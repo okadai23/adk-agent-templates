@@ -1,7 +1,7 @@
 [project]
-name = "clean-interfaces"
+name = "gemini-adk-agent-framework"
 version = "0.1.0"
-description = "A test project for verification"
+description = "Gemini ADK Agent Framework with FastAPI and typed config"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -17,7 +17,7 @@ dependencies = [
 ] # Populated by user or later steps if needed
 
 [project.scripts]
-clean-interfaces = "clean_interfaces.main:main"
+gemini-agent = "gemini_agent.main:main"
 
 [project.optional-dependencies]
 docs = [

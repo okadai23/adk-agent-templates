@@ -14,12 +14,21 @@
 
 ## Epic 0. Repository Bootstrap
 
-- [ ] [TODO] TASK-001: リポジトリ初期化
-- [ ] [TODO] TASK-002: FastAPI App Factory作成
+- [x] [DONE] TASK-001: リポジトリ初期化
+  - `src/gemini_agent` パッケージと `tests/unit|integration|contract|property|e2e` 構成を追加
+  - `pyproject.toml` のプロジェクト名とCLI名をGemini ADK用途へ変更
+  - 検証: `pytest -q tests/unit/test_settings.py tests/e2e/test_gemini_api_factory.py`
+- [x] [DONE] TASK-002: FastAPI App Factory作成
+  - `src/gemini_agent/api/main.py` に `create_app()` を実装
+  - `/healthz`, `/readyz` とOpenAPI公開を追加
+  - 検証: `pytest -q tests/e2e/test_gemini_api_factory.py`
 
 ## Epic 1. Settings / Config System
 
-- [ ] [TODO] TASK-003: Pydantic Settings実装
+- [x] [DONE] TASK-003: Pydantic Settings実装
+  - `src/gemini_agent/settings.py` に `Settings` と `get_settings()` を実装（`AGENT_` prefix / `lru_cache`）
+  - `environment`, `auth_mode`, `runner_mode`, `config_root` を定義し、未知環境変数をignore
+  - 検証: `pytest -q tests/unit/test_settings.py`
 - [ ] [TODO] TASK-004: YAML Config Loader実装
 - [ ] [TODO] TASK-005: SecretResolver実装
 - [ ] [TODO] TASK-006: Config Merge実装
