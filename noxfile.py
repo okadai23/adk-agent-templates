@@ -1,5 +1,6 @@
 """Nox configuration for the project."""
 
+import os
 import pathlib
 import platform
 import sys
@@ -138,7 +139,9 @@ def docs_sphinx(session: Session) -> None:
 
 @nox.session(python=["3.13"], tags=["docs"])
 def docs_serve(session: Session) -> None:
-    """Serve MkDocs documentation locally."""
+    """Serve MkDocs documentation locally (opt-in)."""
+    if not os.environ.get("NOX_RUN_DOCS_SERVE"):
+        session.skip("Set NOX_RUN_DOCS_SERVE=1 to run mkdocs serve in nox")
     session.install("-c", constraints(session).as_posix(), ".[docs]")
     session.run("mkdocs", "serve")
 

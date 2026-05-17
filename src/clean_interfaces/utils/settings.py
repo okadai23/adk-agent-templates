@@ -4,14 +4,14 @@ This module provides centralized configuration management for the application,
 with support for environment variables and validation.
 """
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any, ClassVar, Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class OTelExportMode(str, Enum):
+class OTelExportMode(StrEnum):
     """OpenTelemetry log export modes."""
 
     FILE = "file"
