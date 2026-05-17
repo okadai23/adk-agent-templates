@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from .merge import ConfigMerger
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class ModelProfileError(RuntimeError):
@@ -32,6 +34,7 @@ class ProfileResolver:
     """Resolve profiles including inheritance."""
 
     def __init__(self, profiles: Mapping[str, Mapping[str, Any]]) -> None:
+        """Initialize resolver with raw model profile mapping."""
         self._profiles = {name: dict(raw) for name, raw in profiles.items()}
         self._merger = ConfigMerger()
 

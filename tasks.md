@@ -51,7 +51,8 @@
 - [x] [DONE] TASK-008: ProfileResolver実装
   - `ProfileResolver` と `ModelProfileError` を実装し、`extends` 継承・deep merge・循環参照検出を追加
   - `tests/unit/config/test_model_profiles.py` で継承解決 / unknown profile / cycle検出を検証
-  - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py`
+  - Ruff指摘（TC003/D107）に対応し、`TYPE_CHECKING` import化と `__init__` docstring を追加
+  - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py` / `ruff check src/gemini_agent/config/model_profiles.py`
 - [ ] [TODO] TASK-009: GenerateContentConfig変換実装
 
 ## Epic 3. Agent Catalog / Agent Config
