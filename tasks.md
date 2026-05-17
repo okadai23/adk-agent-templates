@@ -56,6 +56,7 @@
   - Pyright指摘に対応し、config系の再帰型注釈・API route定義・MCPテストの型安全化を実施
   - Config共通型(`ConfigValue`/`ConfigMap`)を導入し、loader/merge/secrets/test群でobject依存を削減
   - `AGENTS.md` を追加し、品質確認は `uv run --with nox nox ...` を必須運用とする指示を明文化
+  - `uv run --with nox nox -s typing` / `-s test` を実行し、loader型エラー修正後に両方成功を確認
   - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py` / `ruff check src/gemini_agent/config/model_profiles.py`
 - [ ] [TODO] TASK-009: GenerateContentConfig変換実装
 

@@ -1,6 +1,8 @@
 """YAML configuration loader for Gemini ADK agent framework."""
 
 from pathlib import Path
+from collections.abc import Mapping
+from typing import Any, cast
 import yaml
 
 from .types import ConfigMap, ConfigValue
@@ -76,7 +78,7 @@ class ConfigLoader:
         if not isinstance(raw_data, dict):
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
-        raw_map: dict[object, object] = dict(raw_data)
+        raw_map = cast(dict[Any, Any], raw_data)
         try:
             return _validate_config_map(raw_map)
         except (TypeError, ValueError) as exc:
@@ -84,7 +86,7 @@ class ConfigLoader:
             raise ConfigLoadError(msg) from exc
 
 
-def _validate_config_map(data: dict[object, object]) -> ConfigMap:
+def _validate_config_map(data: Mapping[Any, Any]) -> ConfigMap:
     validated: ConfigMap = {}
     for key, value in data.items():
         if not isinstance(key, str):
@@ -94,12 +96,12 @@ def _validate_config_map(data: dict[object, object]) -> ConfigMap:
     return validated
 
 
-def _validate_config_value(value: object) -> ConfigValue:
+def _validate_config_value(value: Any) -> ConfigValue:
     if isinstance(value, dict):
-        nested_map: dict[object, object] = dict(value)
+        nested_map = cast(dict[Any, Any], value)
         return _validate_config_map(nested_map)
     if isinstance(value, list):
-        nested_list: list[object] = list(value)
+        nested_list = cast(list[Any], value)
         return [_validate_config_value(item) for item in nested_list]
     if isinstance(value, (str, int, float, bool)) or value is None:
         return value
