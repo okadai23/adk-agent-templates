@@ -68,3 +68,18 @@ def test_unknown_list_operator_raises_error() -> None:
 
     with pytest.raises(ConfigMergeError, match="Unknown list operator"):
         merger.merge({"tools": ["search"]}, {"tools": {"$prepend": ["calc"]}})
+
+
+@pytest.mark.parametrize(
+    ("operator", "invalid_value"),
+    [("$append", {"x": 1}), ("$remove", "rag")],
+)
+def test_list_operator_requires_list_operand(
+    operator: str,
+    invalid_value: object,
+) -> None:
+    """List operators must reject non-list operand values."""
+    merger = ConfigMerger()
+
+    with pytest.raises(ConfigMergeError, match="expects a list value"):
+        merger.merge({"tools": ["search"]}, {"tools": {operator: invalid_value}})

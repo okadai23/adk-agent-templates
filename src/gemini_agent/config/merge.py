@@ -63,9 +63,18 @@ class ConfigMerger:
                 )
                 raise ConfigMergeError(msg)
 
-            merged = deepcopy(base)
-            merged.extend(deepcopy(override.get("$append", [])))
+            append_values = override.get("$append", [])
+            if not isinstance(append_values, list):
+                msg = "List operator '$append' expects a list value."
+                raise ConfigMergeError(msg)
+
             remove_values = override.get("$remove", [])
+            if not isinstance(remove_values, list):
+                msg = "List operator '$remove' expects a list value."
+                raise ConfigMergeError(msg)
+
+            merged = deepcopy(base)
+            merged.extend(deepcopy(append_values))
             return [item for item in merged if item not in remove_values]
 
         return deepcopy(override)
