@@ -147,7 +147,10 @@ class AgentGraphValidator:
     """Validate inter-agent dependency graphs defined by sub_agents."""
 
     def validate(
-        self, configs: dict[str, AgentConfig], *, root_agent: str | None = None,
+        self,
+        configs: dict[str, AgentConfig],
+        *,
+        root_agent: str | None = None,
     ) -> None:
         """Check missing references, graph cycles, and optional root reachability."""
         if root_agent is not None and root_agent not in configs:
@@ -197,7 +200,9 @@ class AgentGraphValidator:
         state[agent_id] = 2
 
     def _collect_reachable(
-        self, root_agent: str, configs: dict[str, AgentConfig],
+        self,
+        root_agent: str,
+        configs: dict[str, AgentConfig],
     ) -> set[str]:
         seen: set[str] = set()
         queue = [root_agent]

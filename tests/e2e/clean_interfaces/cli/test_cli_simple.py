@@ -32,7 +32,7 @@ class TestCLISimple:
     def test_cli_shows_welcome_without_args(self) -> None:
         """Test that CLI shows welcome message when run without arguments."""
         # Run the CLI without arguments
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main"],
             capture_output=True,
             text=True,
@@ -54,7 +54,7 @@ class TestCLISimple:
     def test_cli_help_command(self) -> None:
         """Test that CLI shows help when --help is used."""
         # Run the CLI with --help
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main", "--help"],
             capture_output=True,
             text=True,
@@ -76,7 +76,7 @@ class TestCLISimple:
     def test_cli_invalid_command(self) -> None:
         """Test that CLI handles invalid commands gracefully."""
         # Run the CLI with an invalid command
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main", "invalid-command"],
             capture_output=True,
             text=True,
@@ -94,7 +94,7 @@ class TestCLISimple:
     def test_cli_explicit_welcome_command(self) -> None:
         """Test running the welcome command explicitly."""
         # Run the CLI with welcome command
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main", "welcome"],
             capture_output=True,
             text=True,

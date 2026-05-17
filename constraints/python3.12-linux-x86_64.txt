@@ -83,7 +83,7 @@ dotty-dict==1.3.1
     # via python-semantic-release
 execnet==2.1.1
     # via pytest-xdist
-filelock==3.18.0
+filelock==3.20.3
     # via
     #   cachecontrol
     #   pdm
@@ -273,7 +273,7 @@ pdm==2.25.4
     # via testproject (pyproject.toml)
 pexpect==4.9.0
     # via hatch
-pip==25.3
+pip==26.1
     # via pip-api
 pip-api==0.0.34
     # via pip-audit
@@ -321,7 +321,7 @@ pydantic-core==2.33.2
     # via pydantic
 pydantic-settings==2.10.1
     # via testproject (pyproject.toml)
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   diff-cover
     #   mkdocs-material
@@ -374,7 +374,7 @@ pyyaml-env-tag==1.1
     # via mkdocs
 questionary==2.1.0
     # via commitizen
-requests==2.32.4
+requests==2.33.0
     # via
     #   cachecontrol
     #   id
@@ -474,7 +474,7 @@ typing-inspection==0.4.1
     #   pydantic-settings
 unearth==0.17.5
     # via pdm
-urllib3==2.5.0
+urllib3==2.7.0
     # via
     #   requests
     #   responses

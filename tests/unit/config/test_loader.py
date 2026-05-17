@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from gemini_agent.config.loader import ConfigLoadError, ConfigLoader
+from gemini_agent.config.loader import ConfigLoader, ConfigLoadError
 
 if TYPE_CHECKING:
     from pathlib import Path
+
     from gemini_agent.config.types import ConfigMap
 
 
