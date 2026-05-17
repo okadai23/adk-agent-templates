@@ -107,11 +107,14 @@
 
 ## Epic 6. ADK Agent Factory / Runner
 
-- [ ] [TODO] TASK-022: ADK AgentFactory実装
-- [ ] [TODO] TASK-023: EventMapper実装
-- [ ] [TODO] TASK-024: ADK Embedded Runner実装
-- [ ] [TODO] TASK-025: ADK HTTP Runner実装
-- [ ] [TODO] TASK-026: RunnerRegistry実装
+- [x] [DONE] TASK-022: ADK AgentFactory実装
+- [x] [DONE] TASK-023: EventMapper実装
+- [x] [DONE] TASK-024: ADK Embedded Runner実装
+- [x] [DONE] TASK-025: ADK HTTP Runner実装
+- [x] [DONE] TASK-026: RunnerRegistry実装
+  - `src/gemini_agent/runner/` に AgentFactory / EventMapper / Embedded/HTTP Runner / RunnerRegistry と共通モデルを実装
+  - `tests/unit/runner/test_runner_components.py` で各コンポーネントのユニットテスト（同期実行・ストリーミング・HTTPモック・lazy cache）を追加
+  - 検証: `uv run --with nox nox -s test -- tests/unit/runner/test_runner_components.py` / `uv run --with nox nox`
 
 ## Epic 7. API / Use Cases
 
