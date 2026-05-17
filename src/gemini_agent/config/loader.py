@@ -76,8 +76,9 @@ class ConfigLoader:
         if not isinstance(raw_data, dict):
             msg = f"Top-level YAML document must be a mapping in file: {file_path}"
             raise ConfigLoadError(msg)
+        raw_map: dict[object, object] = dict(raw_data)
         try:
-            return _validate_config_map(raw_data)
+            return _validate_config_map(raw_map)
         except (TypeError, ValueError) as exc:
             msg = f"Invalid config mapping in file {file_path}: {exc}"
             raise ConfigLoadError(msg) from exc
@@ -95,9 +96,11 @@ def _validate_config_map(data: dict[object, object]) -> ConfigMap:
 
 def _validate_config_value(value: object) -> ConfigValue:
     if isinstance(value, dict):
-        return _validate_config_map(value)
+        nested_map: dict[object, object] = dict(value)
+        return _validate_config_map(nested_map)
     if isinstance(value, list):
-        return [_validate_config_value(item) for item in value]
+        nested_list: list[object] = list(value)
+        return [_validate_config_value(item) for item in nested_list]
     if isinstance(value, (str, int, float, bool)) or value is None:
         return value
     msg = f"Unsupported config value type: {type(value).__name__}"
