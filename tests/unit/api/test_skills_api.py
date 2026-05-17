@@ -31,5 +31,5 @@ def test_get_skill_returns_404_for_missing() -> None:
 
     response = client.get("/skills/not-found")
 
-    assert response.status_code == 200
-    assert "error" in response.json()
+    assert response.status_code == 404
+    assert "detail" in response.json()

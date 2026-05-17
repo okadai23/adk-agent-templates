@@ -118,10 +118,22 @@
 
 ## Epic 7. API / Use Cases
 
-- [ ] [TODO] TASK-027: Agent一覧API実装
-- [ ] [TODO] TASK-028: Sync Run API実装
-- [ ] [TODO] TASK-029: Streaming Run API実装
-- [ ] [TODO] TASK-030: Async Job API基礎実装
+- [x] [DONE] TASK-027: Agent一覧API実装
+  - `src/gemini_agent/api/main.py` に `/agents` を追加し、`agent_catalog.yaml` からexposed agent一覧を返す実装を追加
+  - 主要ファイル: `src/gemini_agent/api/main.py`, `tests/unit/api/test_run_apis.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/api/test_run_apis.py`
+- [x] [DONE] TASK-028: Sync Run API実装
+  - `POST /run` を追加し、`AdkEmbeddedRunner` 経由で同期実行結果（run_id/output_text/status）を返す実装を追加
+  - 主要ファイル: `src/gemini_agent/api/main.py`, `tests/unit/api/test_run_apis.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/api/test_run_apis.py`
+- [x] [DONE] TASK-029: Streaming Run API実装
+  - `POST /run:stream` を追加し、Runnerイベントを正規化済みイベント配列として返す実装を追加
+  - 主要ファイル: `src/gemini_agent/api/main.py`, `tests/unit/api/test_run_apis.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/api/test_run_apis.py`
+- [x] [DONE] TASK-030: Async Job API基礎実装
+  - `POST /jobs` / `GET /jobs/{job_id}` を追加し、簡易job storeでqueued/completed状態を返す基礎実装を追加
+  - 主要ファイル: `src/gemini_agent/api/main.py`, `tests/unit/api/test_run_apis.py`
+  - 検証: `uv run --with nox nox -s test -- tests/unit/api/test_run_apis.py`
 
 ## Epic 8. Auth / Security
 
