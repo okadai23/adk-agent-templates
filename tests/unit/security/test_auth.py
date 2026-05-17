@@ -1,7 +1,8 @@
 """Unit tests for auth/security components."""
 
-import pytest
 from typing import Any
+
+import pytest
 from fastapi.testclient import TestClient
 from starlette.exceptions import HTTPException
 
