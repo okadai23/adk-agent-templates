@@ -5,6 +5,7 @@ description = "Gemini ADK Agent Framework with FastAPI and typed config"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "click<8.2",
     "python-dotenv>=1.0.0",
     "pydantic>=2.9.2",
     "pydantic-settings>=2.9.1",
@@ -161,4 +162,3 @@ dev = [
 ]
 
 # [dependency-groups] section removed - all dev dependencies are in [project.optional-dependencies.dev]
-
