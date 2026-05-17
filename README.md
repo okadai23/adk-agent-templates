@@ -134,19 +134,19 @@ uv run pre-commit install
 
 | Command              | Description         |
 | -------------------- | ------------------- |
-| `nox -s lint`        | Run code linting    |
-| `nox -s format_code` | Format code         |
-| `nox -s typing`      | Run type checking   |
-| `nox -s test`        | Run all tests       |
-| `nox -s security`    | Run security checks |
-| `nox -s docs`        | Build documentation |
-| `nox -s ci`          | Run all CI checks   |
+| `uv run --with nox nox -s lint`        | Run code linting    |
+| `uv run --with nox nox -s format_code` | Format code         |
+| `uv run --with nox nox -s typing`      | Run type checking   |
+| `uv run --with nox nox -s test`        | Run all tests       |
+| `uv run --with nox nox -s security`    | Run security checks |
+| `uv run --with nox nox -s docs`        | Build documentation |
+| `uv run --with nox nox -s ci`          | Run all CI checks   |
 
 ### Testing
 
 ```bash
 # Run all tests
-nox -s test
+uv run --with nox nox -s test
 
 # Run specific test file
 uv run pytest tests/unit/clean_interfaces/test_app.py

@@ -1,7 +1,9 @@
 """Configuration merge utilities for layered config composition."""
 
 from copy import deepcopy
-from typing import Any, ClassVar
+from typing import ClassVar
+
+from .types import ConfigMap, ConfigValue
 
 
 class ConfigMergeError(ValueError):
@@ -13,7 +15,7 @@ class ConfigMerger:
 
     _LIST_DIRECTIVES: ClassVar[set[str]] = {"$append", "$remove"}
 
-    def merge(self, base: Any, override: Any) -> Any:
+    def merge(self, base: ConfigValue, override: ConfigValue) -> ConfigValue:
         """Merge `override` onto `base` recursively."""
         if override is None:
             return None
@@ -32,10 +34,10 @@ class ConfigMerger:
 
     def _merge_dict(
         self,
-        base: dict[str, Any],
-        override: dict[str, Any],
-    ) -> dict[str, Any]:
-        merged: dict[str, Any] = deepcopy(base)
+        base: ConfigMap,
+        override: ConfigMap,
+    ) -> ConfigMap:
+        merged: ConfigMap = deepcopy(base)
 
         for key, override_value in override.items():
             if override_value is None:
@@ -49,12 +51,16 @@ class ConfigMerger:
 
         return merged
 
-    def _merge_list(self, base: list[Any], override: Any) -> list[Any]:
+    def _merge_list(
+        self,
+        base: list[ConfigValue],
+        override: ConfigValue,
+    ) -> ConfigValue:
         if isinstance(override, list):
             return deepcopy(override)
 
         if isinstance(override, dict):
-            unknown = set(override) - self._LIST_DIRECTIVES
+            unknown = set(override.keys()) - self._LIST_DIRECTIVES
             if unknown:
                 msg = (
                     "Unknown list operator(s): "
@@ -73,11 +79,11 @@ class ConfigMerger:
                 msg = "List operator '$remove' expects a list value."
                 raise ConfigMergeError(msg)
 
-            merged = deepcopy(base)
+            merged: list[ConfigValue] = deepcopy(base)
             merged.extend(deepcopy(append_values))
             return [item for item in merged if item not in remove_values]
 
         return deepcopy(override)
 
-    def _has_list_directive(self, value: dict[str, Any]) -> bool:
+    def _has_list_directive(self, value: ConfigMap) -> bool:
         return any(key in self._LIST_DIRECTIVES for key in value)

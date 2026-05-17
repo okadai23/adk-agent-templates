@@ -44,8 +44,21 @@
 
 ## Epic 2. Model Profile Resolver
 
-- [ ] [TODO] TASK-007: Model Profile Pydantic Model実装
-- [ ] [TODO] TASK-008: ProfileResolver実装
+- [x] [DONE] TASK-007: Model Profile Pydantic Model実装
+  - `src/gemini_agent/config/model_profiles.py` に `ModelProfile` を追加（temperature / top_p / top_k / token上限の型・範囲検証）
+  - 追加フィールド許容（`extra="allow"`）で将来のGenerateContentConfig拡張にも対応
+  - 検証: `pytest -q tests/unit/config/test_model_profiles.py`
+- [x] [DONE] TASK-008: ProfileResolver実装
+  - `ProfileResolver` と `ModelProfileError` を実装し、`extends` 継承・deep merge・循環参照検出を追加
+  - `tests/unit/config/test_model_profiles.py` で継承解決 / unknown profile / cycle検出を検証
+  - Ruff指摘（TC003/D107）に対応し、`TYPE_CHECKING` import化と `__init__` docstring を追加
+  - CI typing依存解決エラー（`deprecated` ↔ `wrapt`）に対応し、`wrapt<2` 制約をdev依存/constraintsへ反映
+  - Pyright指摘に対応し、config系の再帰型注釈・API route定義・MCPテストの型安全化を実施
+  - Config共通型(`ConfigValue`/`ConfigMap`)を導入し、loader/merge/secrets/test群でobject依存を削減
+  - `AGENTS.md` を追加し、品質確認は `uv run --with nox nox ...` を必須運用とする指示を明文化
+  - `uv run --with nox nox -s typing` / `-s test` を実行し、loader型エラー修正後に両方成功を確認
+  - CI pyright再発（`dict[Unknown, Unknown]`）に対応し、`loader.py` の検証ヘルパ引数を `dict[object, object]` / `list[object]` に統一
+  - 検証: `pytest -q tests/unit/config/test_model_profiles.py tests/unit/config/test_loader.py` / `ruff check src/gemini_agent/config/model_profiles.py`
 - [ ] [TODO] TASK-009: GenerateContentConfig変換実装
 
 ## Epic 3. Agent Catalog / Agent Config
