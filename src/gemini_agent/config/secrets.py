@@ -3,6 +3,8 @@
 import os
 import re
 
+from .types import ConfigValue
+
 _PATTERN = re.compile(r"\$\{(ENV|SECRET):([A-Za-z_][A-Za-z0-9_]*)\}")
 
 
@@ -17,11 +19,11 @@ class SecretResolver:
         """Initialize resolver with optional env provider."""
         self._env_provider = dict(os.environ) if env_provider is None else env_provider
 
-    def resolve(self, value: object) -> object:
+    def resolve(self, value: ConfigValue) -> ConfigValue:
         """Resolve placeholders inside nested structures."""
-        if _is_str_object_dict(value):
+        if isinstance(value, dict):
             return {key: self.resolve(nested) for key, nested in value.items()}
-        if _is_object_list(value):
+        if isinstance(value, list):
             return [self.resolve(item) for item in value]
         if isinstance(value, str):
             return self._resolve_text(value)
@@ -44,11 +46,3 @@ class SecretResolver:
             msg = f"Missing {placeholder_type} value for key '{key}'."
             raise SecretResolutionError(msg)
         return value
-
-
-def _is_str_object_dict(value: object) -> bool:
-    return isinstance(value, dict) and all(isinstance(key, str) for key in value)
-
-
-def _is_object_list(value: object) -> bool:
-    return isinstance(value, list)

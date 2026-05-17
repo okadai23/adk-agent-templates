@@ -10,6 +10,7 @@ from .merge import ConfigMerger
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
+    from .types import ConfigMap
 
 
 class ModelProfileError(RuntimeError):
@@ -35,7 +36,9 @@ class ProfileResolver:
 
     def __init__(self, profiles: Mapping[str, Mapping[str, Any]]) -> None:
         """Initialize resolver with raw model profile mapping."""
-        self._profiles = {name: dict(raw) for name, raw in profiles.items()}
+        self._profiles: dict[str, ConfigMap] = {
+            name: dict(raw) for name, raw in profiles.items()
+        }
         self._merger = ConfigMerger()
 
     def resolve(self, profile_name: str) -> ModelProfile:
@@ -43,7 +46,7 @@ class ProfileResolver:
         resolved = self._resolve_raw(profile_name, stack=[])
         return ModelProfile.model_validate(resolved)
 
-    def _resolve_raw(self, profile_name: str, stack: list[str]) -> dict[str, Any]:
+    def _resolve_raw(self, profile_name: str, stack: list[str]) -> ConfigMap:
         if profile_name not in self._profiles:
             msg = f"Unknown model profile: {profile_name}"
             raise ModelProfileError(msg)
@@ -58,7 +61,7 @@ class ProfileResolver:
             return current
 
         parent_raw = self._resolve_raw(parent_name, stack=[*stack, profile_name])
-        child_raw = {k: v for k, v in current.items() if k != "extends"}
+        child_raw: ConfigMap = {k: v for k, v in current.items() if k != "extends"}
         merged = self._merger.merge(parent_raw, child_raw)
         if not isinstance(merged, dict):
             msg = f"Invalid merged model profile payload for '{profile_name}'."

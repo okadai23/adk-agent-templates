@@ -20,6 +20,7 @@ def test_resolve_env_and_secret_placeholders() -> None:
     }
 
     resolved = resolver.resolve(value)
+    assert isinstance(resolved, dict)
 
     assert resolved["project"] == "project-local"
     assert resolved["auth"]["credential"] == "Bearer token-value"

@@ -3,6 +3,8 @@
 from copy import deepcopy
 from typing import ClassVar
 
+from .types import ConfigMap, ConfigValue
+
 
 class ConfigMergeError(ValueError):
     """Raised when an invalid merge directive is detected."""
@@ -13,18 +15,18 @@ class ConfigMerger:
 
     _LIST_DIRECTIVES: ClassVar[set[str]] = {"$append", "$remove"}
 
-    def merge(self, base: object, override: object) -> object:
+    def merge(self, base: ConfigValue, override: ConfigValue) -> ConfigValue:
         """Merge `override` onto `base` recursively."""
         if override is None:
             return None
 
-        if _is_str_object_dict(base) and _is_str_object_dict(override):
+        if isinstance(base, dict) and isinstance(override, dict):
             return self._merge_dict(base, override)
 
-        if _is_object_list(base):
+        if isinstance(base, list):
             return self._merge_list(base, override)
 
-        if _is_str_object_dict(override) and self._has_list_directive(override):
+        if isinstance(override, dict) and self._has_list_directive(override):
             msg = "List directives are only valid when overriding list values."
             raise ConfigMergeError(msg)
 
@@ -32,10 +34,10 @@ class ConfigMerger:
 
     def _merge_dict(
         self,
-        base: dict[str, object],
-        override: dict[str, object],
-    ) -> dict[str, object]:
-        merged: dict[str, object] = deepcopy(base)
+        base: ConfigMap,
+        override: ConfigMap,
+    ) -> ConfigMap:
+        merged: ConfigMap = deepcopy(base)
 
         for key, override_value in override.items():
             if override_value is None:
@@ -49,7 +51,11 @@ class ConfigMerger:
 
         return merged
 
-    def _merge_list(self, base: list[object], override: object) -> object:
+    def _merge_list(
+        self,
+        base: list[ConfigValue],
+        override: ConfigValue,
+    ) -> ConfigValue:
         if isinstance(override, list):
             return deepcopy(override)
 
@@ -73,19 +79,11 @@ class ConfigMerger:
                 msg = "List operator '$remove' expects a list value."
                 raise ConfigMergeError(msg)
 
-            merged: list[object] = deepcopy(base)
+            merged: list[ConfigValue] = deepcopy(base)
             merged.extend(deepcopy(append_values))
             return [item for item in merged if item not in remove_values]
 
         return deepcopy(override)
 
-    def _has_list_directive(self, value: dict[str, object]) -> bool:
+    def _has_list_directive(self, value: ConfigMap) -> bool:
         return any(key in self._LIST_DIRECTIVES for key in value)
-
-
-def _is_str_object_dict(value: object) -> bool:
-    return isinstance(value, dict) and all(isinstance(key, str) for key in value)
-
-
-def _is_object_list(value: object) -> bool:
-    return isinstance(value, list)

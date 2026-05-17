@@ -19,6 +19,7 @@ def test_deep_merge_with_scalar_override() -> None:
     child = {"model": {"temperature": 0.7}, "timeout": 45}
 
     merged = merger.merge(parent, child)
+    assert isinstance(merged, dict)
 
     assert merged == {
         "model": {
@@ -35,6 +36,7 @@ def test_list_replace_by_default() -> None:
     merger = ConfigMerger()
 
     merged = merger.merge({"tools": ["search", "rag"]}, {"tools": ["calc"]})
+    assert isinstance(merged, dict)
 
     assert merged["tools"] == ["calc"]
 
@@ -46,6 +48,7 @@ def test_list_append_and_remove() -> None:
     child = {"tools": {"$append": ["planner", "calc"], "$remove": ["rag"]}}
 
     merged = merger.merge(parent, child)
+    assert isinstance(merged, dict)
 
     assert merged["tools"] == ["search", "calc", "planner", "calc"]
 
