@@ -66,7 +66,8 @@ def test_graph_validator_accepts_valid_dag() -> None:
     validator = AgentGraphValidator()
     configs = {
         "router_agent": _agent_config(
-            "router_agent", sub_agents=["billing_agent", "rag_agent"],
+            "router_agent",
+            sub_agents=["billing_agent", "rag_agent"],
         ),
         "billing_agent": _agent_config("billing_agent"),
         "rag_agent": _agent_config("rag_agent"),

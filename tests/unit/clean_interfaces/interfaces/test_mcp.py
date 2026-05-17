@@ -1,7 +1,7 @@
 """Tests for MCP interface implementation."""
 
-from unittest.mock import MagicMock, patch
 from collections.abc import Callable
+from unittest.mock import MagicMock, patch
 
 from fastmcp import FastMCP
 

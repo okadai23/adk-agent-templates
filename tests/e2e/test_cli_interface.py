@@ -19,7 +19,7 @@ class TestCLIInterfaceE2E:
     def test_cli_welcome_message(self) -> None:
         """Test that CLI displays welcome message on startup."""
         # Run the CLI command
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main"],
             capture_output=True,
             text=True,
@@ -33,7 +33,7 @@ class TestCLIInterfaceE2E:
     def test_cli_help_command(self) -> None:
         """Test that CLI displays help message with --help flag."""
         # Run the CLI command with --help
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main", "--help"],
             capture_output=True,
             text=True,
@@ -52,7 +52,7 @@ class TestCLIInterfaceE2E:
         # Set environment variable
         monkeypatch.setenv("INTERFACE_TYPE", "cli")
 
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [sys.executable, "-m", "clean_interfaces.main"],
             capture_output=True,
             text=True,

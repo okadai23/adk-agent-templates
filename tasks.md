@@ -79,12 +79,16 @@
 
 ## Epic 4. Knowledge Source Factory / RAG
 
-- [ ] [TODO] TASK-013: Knowledge Config Pydantic Model実装
-- [ ] [TODO] TASK-014: KnowledgeRetriever Port実装
-- [ ] [TODO] TASK-015: KnowledgeSourceFactory実装
-- [ ] [TODO] TASK-016: FakeKnowledgeRetriever実装
-- [ ] [TODO] TASK-017: HybridKnowledgeRetriever実装
-- [ ] [TODO] TASK-018: RAG Tool Factory実装
+- [x] [DONE] TASK-013: Knowledge Config Pydantic Model実装
+- [x] [DONE] TASK-014: KnowledgeRetriever Port実装
+- [x] [DONE] TASK-015: KnowledgeSourceFactory実装
+- [x] [DONE] TASK-016: FakeKnowledgeRetriever実装
+- [x] [DONE] TASK-017: HybridKnowledgeRetriever実装
+- [x] [DONE] TASK-018: RAG Tool Factory実装
+  - `src/gemini_agent/config/knowledge.py` でKnowledge系Pydanticモデルを実装し、RAG設定の型安全化を追加
+  - `src/gemini_agent/rag/retrievers.py` / `src/gemini_agent/rag/factory.py` にRetriever Port・Fake/Hybrid実装・KnowledgeSourceFactory・RAG tool builderを追加
+  - 検証: `uv run --with nox nox -s test -- tests/unit/rag/test_rag_factory.py` / `uv run --with nox nox -s security`
+
 
 ## Epic 5. Tool / Skill Factory
 
