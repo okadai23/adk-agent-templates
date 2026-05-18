@@ -1,0 +1,3 @@
+local_docs:
+  type: inline
+  description: Minimal local knowledge source for examples

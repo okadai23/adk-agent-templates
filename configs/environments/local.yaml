@@ -1,0 +1,4 @@
+runner:
+  mode: embedded
+auth:
+  mode: none

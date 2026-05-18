@@ -1,0 +1,7 @@
+version: 1
+root_agent: root
+agents:
+  root:
+    config_path: agents/root.yaml
+    exposed: true
+    allowed_roles: ["user"]
