@@ -14,8 +14,3 @@ This section contains the complete API reference for Clean Interfaces.
    models
    utils
 
-.. toctree::
-   :hidden:
-   :glob:
-
-   _autosummary/*

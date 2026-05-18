@@ -146,6 +146,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 reportMissingImports = true
 reportMissingTypeStubs = false
+reportMissingModuleSource = false
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
