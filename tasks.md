@@ -189,14 +189,47 @@
 
 ## Epic 11. Documentation / Examples
 
-- [ ] [TODO] TASK-044: README作成
-- [ ] [TODO] TASK-045: Example Config一式作成
-- [ ] [TODO] TASK-046: Smoke Test Script作成
+- [x] [DONE] TASK-044: README作成
+  - Gemini ADK Agent Framework向けにREADMEを全面更新（機能・起動・検証手順を明記）
+  - 主要ファイル: `README.md`
+  - 検証: `uv run --with nox nox -s test -- tests/integration/test_mvp_smoke.py`
+- [x] [DONE] TASK-045: Example Config一式作成
+  - `configs/` 配下に model_profiles / knowledge_sources / agent_catalog / agent / environment / skill の最小構成を追加
+  - 主要ファイル: `configs/model_profiles.yaml`, `configs/agent_catalog.yaml`, `configs/agents/root.yaml` ほか
+  - 検証: `uv run --with nox nox -s test -- tests/integration/test_mvp_smoke.py`
+- [x] [DONE] TASK-046: Smoke Test Script作成
+  - `scripts/smoke_test.sh` を追加し `/healthz` `/readyz` `/agents` `/run` の疎通確認を自動化
+  - 主要ファイル: `scripts/smoke_test.sh`
+  - 検証: `bash -n scripts/smoke_test.sh`
 
 ## Epic 12. MVP Completion
 
-- [ ] [TODO] TASK-047: MVP統合テスト
-- [ ] [TODO] TASK-048: v1 Release Checklist作成
+- [x] [DONE] TASK-047: MVP統合テスト
+  - `tests/integration/test_mvp_smoke.py` を追加し example config でのコアエンドポイント統合確認を実装
+  - 主要ファイル: `tests/integration/test_mvp_smoke.py`
+  - 検証: `uv run --with nox nox -s test -- tests/integration/test_mvp_smoke.py`
+- [x] [DONE] TASK-048: v1 Release Checklist作成
+  - v1向けの品質・契約・スモーク確認項目を `docs/release/v1-checklist.md` として追加
+  - 主要ファイル: `docs/release/v1-checklist.md`
+  - 検証: `uv run --with nox nox -s lint`
+
+## Epic 13. Stabilization / CI Hardening
+
+- [x] [DONE] TASK-052: Pyright設定の正攻法対応
+  - `pyproject.toml` から `reportMissingModuleSource = false` を削除し、警告抑止に依存しない設定へ戻した
+  - `venvPath` / `venv` を削除して、Pyrightが実行環境（nox typing仮想環境）を正しく参照するよう修正
+  - 検証: `uv run --with nox nox -s typing` / `uv run --with nox nox`
+- [x] [DONE] TASK-051: static解析/ドキュメント警告の解消
+  - `pyproject.toml` の pyright 設定に `reportMissingModuleSource = false` を追加し、stub運用時の不要警告を抑制
+  - `docs/source/api/index.rst` と `docs/source/api/app.rst` を整理し、Sphinx重複警告/未一致glob警告を解消
+  - 検証: `uv run --with nox nox`（typing/docs_sphinx含む）
+- [x] [DONE] TASK-049: MVP統合テストの隔離
+  - `tests/integration/test_mvp_smoke.py` を `tmp_path` + `AGENT_CONFIG_ROOT` 上書きに変更し、リポジトリ直下 `configs/agent_catalog.yaml` の破壊的上書きを解消
+  - `get_settings.cache_clear()` を前後で実行し、設定キャッシュ汚染によるテスト順依存を回避
+  - 検証: `uv run --with nox nox -s test -- tests/integration/test_mvp_smoke.py`
+- [x] [DONE] TASK-050: Epic13反映と運用記録
+  - `tasks.md` に Epic13 を追加し、安定化対応の進捗と検証手順を記録
+  - 検証: `uv run --with nox nox -s lint`
 
 ---
 
@@ -213,6 +246,7 @@
 9. TASK-034〜037: Observability
 10. TASK-038〜043: Spec / Mock / Testing
 11. TASK-044〜048: Docs / MVP統合
+12. TASK-049〜052: Stabilization / CI Hardening
 
 ---
 
