@@ -267,7 +267,7 @@ pathspec==0.12.1
     # via
     #   hatchling
     #   mkdocs
-pbs-installer==2025.7.12
+pbs-installer==2026.5.10
     # via pdm
 pdm==2.25.4
     # via testproject (pyproject.toml)
