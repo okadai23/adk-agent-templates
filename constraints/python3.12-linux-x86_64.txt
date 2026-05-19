@@ -22,7 +22,7 @@ blinker==1.9.0
     # via pdm
 boolean-py==5.0
     # via license-expression
-cachecontrol==0.14.3
+cachecontrol==0.14.4
     # via pip-audit
 certifi==2025.8.3
     # via
