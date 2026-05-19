@@ -1,0 +1,9 @@
+agent_id: root
+name: Root Agent
+model:
+  profile: default
+system_instruction: |
+  You are a helpful assistant for smoke tests.
+tools: []
+skills:
+  - welcome
