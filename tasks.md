@@ -231,6 +231,19 @@
   - `tasks.md` に Epic13 を追加し、安定化対応の進捗と検証手順を記録
   - 検証: `uv run --with nox nox -s lint`
 
+
+
+## Epic 14. Skeleton Audit
+
+- [x] [DONE] TASK-053: スケルトン実装箇所の棚卸し
+  - `src/` 配下を対象に `NotImplementedError` / skeleton記述を点検し、要実装候補を抽出
+  - 主要ファイル: `docs/development/skeleton-implementation-audit.md`
+  - 検証: `uv run --with nox nox -s lint` / `uv run --with nox nox -s typing`
+- [x] [DONE] TASK-054: `src/gemini_agent` 全体のスケルトン再監査
+  - `observability` / `rag` / `runner` を追加点検し、placeholder・fake限定実装・簡易Runnerを監査結果へ追記
+  - 主要ファイル: `docs/development/skeleton-implementation-audit.md`
+  - 検証: `uv run --with nox nox -s lint` / `uv run --with nox nox -s typing`
+
 ---
 
 ## 推奨実装順
